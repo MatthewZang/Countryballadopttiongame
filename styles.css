@@ -67,42 +67,61 @@ h2 {
 }
 
 .canada-ball {
-    background: linear-gradient(90deg, 
-        #d80621 0%, #d80621 33%, 
-        white 33%, white 67%, 
-        #d80621 67%, #d80621 100%);
+    background: #FF0000; /* Canadian red */
     position: relative;
+    overflow: hidden;
 }
 
-.canada-ball::after {
-    content: '';
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path fill="%23d80621" d="M50,10 L53,30 L70,30 L56,42 L62,62 L50,50 L38,62 L44,42 L30,30 L47,30 Z M50,25 L48,35 L38,35 L46,43 L42,55 L50,47 L58,55 L54,43 L62,35 L52,35 Z"/></svg>');
-    background-size: contain;
-    background-repeat: no-repeat;
-    top: 40px;
-    left: 40px;
-}
-
-.eyes {
+.canada-ball .flag-image {
     position: absolute;
     width: 100%;
-    top: 40px;
-    display: flex;
-    justify-content: center;
-    gap: 30px;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        #FF0000 0%,
+        #FF0000 25%,
+        white 25%,
+        white 75%,
+        #FF0000 75%,
+        #FF0000 100%
+    );
 }
 
-.eyes::before, .eyes::after {
+.canada-ball .flag-image::after {
     content: '';
-    width: 20px;
-    height: 10px;
+    position: absolute;
+    width: 40%;
+    height: 40%;
+    top: 30%;
+    left: 30%;
+    background-color: #FF0000;
+    clip-path: polygon(
+        50% 0%, 40% 25%, 0% 25%, 30% 45%, 20% 100%, 
+        50% 70%, 80% 100%, 70% 45%, 100% 25%, 60% 25%
+    );
+}
+
+/* Update the eyes to match the reference image */
+.canada-ball .eyes {
+    position: absolute;
+    width: 100%;
+    top: 30%;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    z-index: 2;
+}
+
+.canada-ball .eyes::before, 
+.canada-ball .eyes::after {
+    content: '';
+    width: 25px;
+    height: 15px;
     background-color: white;
     border-radius: 50% 50% 0 0;
     border: 2px solid black;
     border-bottom: none;
+    transform: rotate(180deg);
 }
 
 .ball-name {
