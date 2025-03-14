@@ -345,53 +345,158 @@ function updatePlayerPosition() {
     updateCameraPosition();
 }
 
-// New function to update camera position
+// Update camera position function
 function updateCameraPosition() {
     const currentContainer = document.querySelector(`#world-${worldState.currentArea} .world-area-container`);
-    const sceneWidth = document.querySelector(`#world-${worldState.currentArea} .scene`).offsetWidth;
-    const sceneHeight = document.querySelector(`#world-${worldState.currentArea} .scene`).offsetHeight;
+    const sceneElement = document.querySelector(`#world-${worldState.currentArea} .scene`);
+    const sceneWidth = sceneElement.offsetWidth;
+    const sceneHeight = sceneElement.offsetHeight;
+    
+    // Get current player ball position
+    let playerX, playerY;
+    const currentPlayerBall = document.querySelector(`#world-${worldState.currentArea} .player-ball`);
+    
+    if (currentPlayerBall) {
+        playerX = parseInt(currentPlayerBall.style.left) || worldState.playerPosition.x;
+        playerY = parseInt(currentPlayerBall.style.top) || worldState.playerPosition.y;
+    } else {
+        playerX = worldState.playerPosition.x;
+        playerY = worldState.playerPosition.y;
+    }
     
     // Calculate camera position (centered on player)
-    const cameraX = worldState.playerPosition.x - (sceneWidth / 2);
-    const cameraY = worldState.playerPosition.y - (sceneHeight / 2);
+    const cameraX = playerX - (sceneWidth / 2);
+    const cameraY = playerY - (sceneHeight / 2);
     
     // Constrain camera to world boundaries
     const constrainedX = Math.max(0, Math.min(2000 - sceneWidth, cameraX));
     const constrainedY = Math.max(0, Math.min(2000 - sceneHeight, cameraY));
     
-    // Apply camera position
+    // Apply camera position with smooth transition
+    currentContainer.style.transition = 'transform 0.2s ease-out';
     currentContainer.style.transform = `translate(${-constrainedX}px, ${-constrainedY}px)`;
 }
 
-// Move player with WASD keys
-function movePlayer(e) {
-    if (worldContainer.classList.contains('hidden')) return;
+// Add collision detection for world objects
+function checkCollision(x, y, worldArea) {
+    // Get all objects in the current world area
+    const objects = worldArea.querySelectorAll('.world-object');
     
-    const step = 20; // Larger step for bigger world
-    let moved = false;
+    // Define player size
+    const playerSize = 50; // Width/height of player ball
     
-    switch (e.key.toLowerCase()) {
-        case 'a': // Left
-            worldState.playerPosition.x = Math.max(25, worldState.playerPosition.x - step);
-            moved = true;
+    // Check collision with each object
+    for (let obj of objects) {
+        // Get object position and size
+        const objRect = obj.getBoundingClientRect();
+        const objLeft = parseInt(obj.style.left);
+        const objTop = parseInt(obj.style.top);
+        const objWidth = objRect.width;
+        const objHeight = objRect.height;
+        
+        // Simple collision detection
+        if (x < objLeft + objWidth &&
+            x + playerSize > objLeft &&
+            y < objTop + objHeight &&
+            y + playerSize > objTop) {
+            return true; // Collision detected
+        }
+    }
+    
+    return false; // No collision
+}
+
+// Update player movement to include collision detection
+function movePlayer(direction, worldArea, playerBall, positionDisplay) {
+    // Get current position
+    let currentLeft = parseInt(playerBall.style.left) || 0;
+    let currentTop = parseInt(playerBall.style.top) || 0;
+    
+    // Calculate new position
+    let newLeft = currentLeft;
+    let newTop = currentTop;
+    const moveStep = 20;
+    
+    switch(direction) {
+        case 'up':
+            newTop = currentTop - moveStep;
             break;
-        case 'd': // Right
-            worldState.playerPosition.x = Math.min(1975, worldState.playerPosition.x + step);
-            moved = true;
+        case 'down':
+            newTop = currentTop + moveStep;
             break;
-        case 'w': // Up
-            worldState.playerPosition.y = Math.max(25, worldState.playerPosition.y - step);
-            moved = true;
+        case 'left':
+            newLeft = currentLeft - moveStep;
             break;
-        case 's': // Down
-            worldState.playerPosition.y = Math.min(1975, worldState.playerPosition.y + step);
-            moved = true;
+        case 'right':
+            newLeft = currentLeft + moveStep;
             break;
     }
     
-    if (moved) {
-        updatePlayerPosition();
-        e.preventDefault();
+    // Check boundaries
+    if (newLeft < 0) newLeft = 0;
+    if (newTop < 0) newTop = 0;
+    if (newLeft > 1950) newLeft = 1950;
+    if (newTop > 1950) newTop = 1950;
+    
+    // Check for collisions
+    if (!checkCollision(newLeft, newTop, worldArea)) {
+        // No collision, update position
+        playerBall.style.left = newLeft + 'px';
+        playerBall.style.top = newTop + 'px';
+        
+        // Update worldState position to keep track
+        worldState.playerPosition.x = newLeft;
+        worldState.playerPosition.y = newTop;
+        
+        // Update position display
+        positionDisplay.textContent = `${newLeft}, ${newTop}`;
+        
+        // Update mini-map
+        updateMiniMap(newLeft, newTop, worldArea);
+        
+        // Update camera to follow player
+        updateCameraPosition();
+    }
+}
+
+// Add this to your existing event listeners
+document.addEventListener('keydown', function(e) {
+    if (worldContainer.classList.contains('hidden')) return;
+    
+    const activeArea = document.querySelector('.world-area.active');
+    const playerBall = activeArea.querySelector('.player-ball');
+    const positionDisplay = activeArea.querySelector('.position-indicator span');
+    
+    switch(e.key) {
+        case 'ArrowUp':
+        case 'w':
+            movePlayer('up', activeArea, playerBall, positionDisplay);
+            break;
+        case 'ArrowDown':
+        case 's':
+            movePlayer('down', activeArea, playerBall, positionDisplay);
+            break;
+        case 'ArrowLeft':
+        case 'a':
+            movePlayer('left', activeArea, playerBall, positionDisplay);
+            break;
+        case 'ArrowRight':
+        case 'd':
+            movePlayer('right', activeArea, playerBall, positionDisplay);
+            break;
+    }
+});
+
+// Update mini-map position
+function updateMiniMap(x, y, worldArea) {
+    const miniMapPlayer = worldArea.querySelector('.mini-map-player');
+    if (miniMapPlayer) {
+        // Scale down coordinates to fit mini-map
+        const miniMapX = (x / 2000) * 100;
+        const miniMapY = (y / 2000) * 100;
+        
+        miniMapPlayer.style.left = miniMapX + '%';
+        miniMapPlayer.style.top = miniMapY + '%';
     }
 }
 
@@ -478,7 +583,7 @@ function checkBuildingCollisions() {
                     height: 120
                 };
                 
-                if (checkCollision(playerX, playerY, playerRadius, marketRect)) {
+                if (checkCollision(playerX, playerY, worldAreas[0])) {
                     createEnterEffect(playerX, playerY);
                     changeArea('market');
                     setTimeout(() => enterSupermarket(), 500);
@@ -494,7 +599,7 @@ function checkBuildingCollisions() {
                     height: 120
                 };
                 
-                if (checkCollision(playerX, playerY, playerRadius, parkRect)) {
+                if (checkCollision(playerX, playerY, worldAreas[1])) {
                     createEnterEffect(playerX, playerY);
                     changeArea('park');
                     setTimeout(() => enterParkActivities(), 500);
@@ -512,7 +617,7 @@ function checkBuildingCollisions() {
                     height: 120
                 };
                 
-                if (checkCollision(playerX, playerY, playerRadius, signRect)) {
+                if (checkCollision(playerX, playerY, worldAreas[2])) {
                     createEnterEffect(playerX, playerY);
                     enterSupermarket();
                 }
@@ -529,27 +634,13 @@ function checkBuildingCollisions() {
                     height: 120
                 };
                 
-                if (checkCollision(playerX, playerY, playerRadius, signRect)) {
+                if (checkCollision(playerX, playerY, worldAreas[1])) {
                     createEnterEffect(playerX, playerY);
                     enterParkActivities();
                 }
             }
             break;
     }
-}
-
-// Helper function to check collision between circle and rectangle
-function checkCollision(circleX, circleY, radius, rect) {
-    // Find the closest point to the circle within the rectangle
-    const closestX = Math.max(rect.x, Math.min(circleX, rect.x + rect.width));
-    const closestY = Math.max(rect.y, Math.min(circleY, rect.y + rect.height));
-    
-    // Calculate the distance between the circle's center and this closest point
-    const distanceX = circleX - closestX;
-    const distanceY = circleY - closestY;
-    
-    // If the distance is less than the circle's radius, an intersection occurs
-    return (distanceX * distanceX + distanceY * distanceY) < (radius * radius);
 }
 
 // Function to enter the supermarket

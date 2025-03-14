@@ -1,4 +1,6 @@
 ## Play a country ball game here!
+#problems
+Some country balls flags might not look as  real as the real flag just like Canada Ball. Sorry for that.
 # here is how to play
 How to Play the Country Ball Adoption Game
 Based on the HTML code you've shared, here's how to play the Country Ball Adoption Game:

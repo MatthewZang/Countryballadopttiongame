@@ -755,4 +755,98 @@ button:hover {
     left: 20px;
     font-size: 16px;
     color: #4caf50;
+}
+
+/* Add Korean ball styling */
+.korea-ball {
+    background: white;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.korea-ball .flag-image {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: white;
+}
+
+.korea-ball .flag-image::before {
+    content: '';
+    position: absolute;
+    width: 40%;
+    height: 40%;
+    top: 30%;
+    left: 30%;
+    background: linear-gradient(
+        to right,
+        #C60C30 0%,
+        #C60C30 50%,
+        #003478 50%,
+        #003478 100%
+    );
+    border-radius: 50%;
+    transform: rotate(-30deg);
+}
+
+.korea-ball .flag-image::after {
+    content: '';
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    top: 10%;
+    left: 10%;
+    background-image: 
+        /* Top left */
+        linear-gradient(to bottom, black, black),
+        linear-gradient(to bottom, black, black),
+        linear-gradient(to bottom, black, black),
+        /* Top right */
+        linear-gradient(to bottom, black, black),
+        linear-gradient(to bottom, black, black),
+        linear-gradient(to bottom, black, black),
+        /* Bottom left */
+        linear-gradient(to bottom, black, black),
+        linear-gradient(to bottom, black, black),
+        linear-gradient(to bottom, black, black),
+        /* Bottom right */
+        linear-gradient(to bottom, black, black),
+        linear-gradient(to bottom, black, black),
+        linear-gradient(to bottom, black, black);
+    background-position: 
+        /* Top left */
+        15% 15%, 20% 15%, 25% 15%,
+        /* Top right */
+        75% 15%, 80% 15%, 85% 15%,
+        /* Bottom left */
+        15% 85%, 20% 85%, 25% 85%,
+        /* Bottom right */
+        75% 85%, 80% 85%, 85% 85%;
+    background-size: 
+        3px 10px, 3px 10px, 3px 10px,
+        3px 10px, 3px 10px, 3px 10px,
+        3px 10px, 3px 10px, 3px 10px,
+        3px 10px, 3px 10px, 3px 10px;
+    background-repeat: no-repeat;
+}
+
+.korea-ball .eyes {
+    position: absolute;
+    width: 100%;
+    top: 30%;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    z-index: 2;
+}
+
+.korea-ball .eyes::before, 
+.korea-ball .eyes::after {
+    content: '';
+    width: 25px;
+    height: 25px;
+    background-color: white;
+    border-radius: 50%;
+    border: 2px solid black;
 } 

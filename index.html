@@ -5,6 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Country Ball Adoption Game</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Hide all country balls except Korea in adoption center */
+        .available-balls .ball-item:not(:first-child) {
+            display: none !important;
+        }
+        
+        /* Make sure Korea ball is the only one visible */
+        .available-balls .ball-item:first-child .ball-name {
+            content: "Korea Ball" !important;
+        }
+        
+        .available-balls .ball-item:first-child .ball-price {
+            content: "1000 coins" !important;
+        }
+        
+        /* Hide any dynamically added balls in collection except Canada */
+        #ball-collection .ball-item:not(:first-child) {
+            display: none !important;
+        }
+    </style>
 </head>
 <body>
     <div class="game-container">
@@ -32,7 +52,15 @@
                 <h2>Adoption Center</h2>
                 <p>Adopt new country balls to add to your collection!</p>
                 <div class="available-balls">
-                    <!-- Balls will be added here dynamically -->
+                    <div class="ball-item">
+                        <div class="ball korea-ball locked">
+                            <div class="flag-image"></div>
+                            <div class="eyes"></div>
+                        </div>
+                        <div class="ball-name">Korea Ball</div>
+                        <div class="ball-price">1000 coins</div>
+                        <button class="adopt-btn" data-ball="korea" data-price="1000">Adopt</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -146,11 +174,59 @@
                     </div>
                     <div class="ball-name">Canada Ball</div>
                 </div>
-                <!-- More balls will be added here as they're adopted -->
             </div>
         </div>
     </div>
     
+    <script>
+        // Override any JavaScript that might be adding country balls
+        window.addEventListener('DOMContentLoaded', function() {
+            // Force Korea ball to be the only one in adoption center
+            setTimeout(function() {
+                const availableBalls = document.querySelector('.available-balls');
+                if (availableBalls) {
+                    // Keep only the first ball (which should be Korea)
+                    const firstBall = availableBalls.querySelector('.ball-item');
+                    if (firstBall) {
+                        // Clear everything
+                        availableBalls.innerHTML = '';
+                        // Create Korea ball
+                        const koreaBall = document.createElement('div');
+                        koreaBall.className = 'ball-item';
+                        koreaBall.innerHTML = `
+                            <div class="ball korea-ball locked">
+                                <div class="flag-image"></div>
+                                <div class="eyes"></div>
+                            </div>
+                            <div class="ball-name">Korea Ball</div>
+                            <div class="ball-price">1000 coins</div>
+                            <button class="adopt-btn" data-ball="korea" data-price="1000">Adopt</button>
+                        `;
+                        availableBalls.appendChild(koreaBall);
+                    }
+                }
+                
+                // Keep only Canada ball in collection
+                const ballCollection = document.getElementById('ball-collection');
+                if (ballCollection) {
+                    const firstCollectionBall = ballCollection.querySelector('.ball-item');
+                    if (firstCollectionBall) {
+                        ballCollection.innerHTML = '';
+                        const canadaBall = document.createElement('div');
+                        canadaBall.className = 'ball-item owned';
+                        canadaBall.innerHTML = `
+                            <div class="ball canada-ball">
+                                <div class="flag-image"></div>
+                                <div class="eyes"></div>
+                            </div>
+                            <div class="ball-name">Canada Ball</div>
+                        `;
+                        ballCollection.appendChild(canadaBall);
+                    }
+                }
+            }, 100); // Small delay to ensure DOM is fully loaded
+        });
+    </script>
     <script src="script.js"></script>
 </body>
 </html> 
