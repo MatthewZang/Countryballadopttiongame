@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Country Ball Adoption Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1>Country Ball Adoption Game</h1>
+        
+        <div class="stats-panel">
+            <div class="currency">Coins: <span id="coins">100</span></div>
+            <div class="level">Level: <span id="level">1</span></div>
+        </div>
+        
+        <div class="main-area">
+            <div class="current-ball">
+                <h2>Your Country Ball</h2>
+                <div id="active-ball" class="ball canada-ball">
+                    <div class="eyes"></div>
+                </div>
+                <div class="ball-name">Canada Ball</div>
+                <div class="ball-happiness">Happiness: <span id="happiness">50</span>%</div>
+                <button id="feed-btn">Feed (5 coins)</button>
+                <button id="play-btn">Play (10 coins)</button>
+            </div>
+            
+            <div class="adoption-center">
+                <h2>Adoption Center</h2>
+                <p>Adopt new country balls to add to your collection!</p>
+                <div class="available-balls">
+                    <!-- Balls will be added here dynamically -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="world-section">
+            <button id="enter-world-btn" class="special-btn">Enter World</button>
+            <div id="world-container" class="hidden">
+                <div class="world-controls">
+                    <button id="return-btn">Return to Home</button>
+                    <button id="go-park-btn">Go to Park</button>
+                    <button id="go-market-btn">Go to Market</button>
+                    <button id="go-home-btn">Go to Home</button>
+                </div>
+                <div id="world-view">
+                    <div id="world-home" class="world-area active">
+                        <h3>Home</h3>
+                        <div class="scene home-scene">
+                            <div class="world-area-container">
+                                <div id="player-ball" class="player-ball canada-ball">
+                                    <div class="eyes"></div>
+                                </div>
+                                
+                                <!-- Home objects -->
+                                <div class="world-object bed" style="left: 200px; top: 300px;"></div>
+                                <div class="world-object table" style="left: 500px; top: 400px;"></div>
+                                <div class="world-object table" style="left: 1200px; top: 800px;"></div>
+                                <div class="world-object bed" style="left: 1500px; top: 1200px;"></div>
+                                <div class="world-object building market-building" style="left: 800px; top: 600px;">
+                                    <div class="building-label">Market</div>
+                                </div>
+                                <div class="world-object building park-building" style="left: 1400px; top: 400px;">
+                                    <div class="building-label">Park</div>
+                                </div>
+                            </div>
+                            <div class="position-indicator">Position: <span id="position-display">0, 0</span></div>
+                            <div class="mini-map">
+                                <div class="mini-map-player" id="mini-map-player-home"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="world-park" class="world-area">
+                        <h3>Park</h3>
+                        <div class="scene park-scene">
+                            <div class="world-area-container">
+                                <div id="player-ball-park" class="player-ball canada-ball">
+                                    <div class="eyes"></div>
+                                </div>
+                                
+                                <!-- Park objects -->
+                                <div class="world-object tree" style="left: 300px; top: 200px;"></div>
+                                <div class="world-object tree" style="left: 600px; top: 500px;"></div>
+                                <div class="world-object tree" style="left: 900px; top: 300px;"></div>
+                                <div class="world-object tree" style="left: 1200px; top: 700px;"></div>
+                                <div class="world-object tree" style="left: 1500px; top: 1000px;"></div>
+                                <div class="world-object tree" style="left: 1800px; top: 1500px;"></div>
+                                <div class="world-object park-sign" style="left: 500px; top: 400px;">
+                                    <div class="sign-label">Park Entrance</div>
+                                </div>
+                            </div>
+                            <div class="position-indicator">Position: <span id="position-display-park">0, 0</span></div>
+                            <div class="mini-map">
+                                <div class="mini-map-player" id="mini-map-player-park"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="world-market" class="world-area">
+                        <h3>Market</h3>
+                        <div class="scene market-scene">
+                            <div class="world-area-container">
+                                <div id="player-ball-market" class="player-ball canada-ball">
+                                    <div class="eyes"></div>
+                                </div>
+                                
+                                <!-- Market objects -->
+                                <div class="world-object building" style="left: 400px; top: 300px;"></div>
+                                <div class="world-object building" style="left: 700px; top: 500px;"></div>
+                                <div class="world-object shop" style="left: 1000px; top: 800px;"></div>
+                                <div class="world-object shop" style="left: 1300px; top: 1200px;"></div>
+                                <div class="world-object building" style="left: 1600px; top: 1500px;"></div>
+                                <div class="world-object supermarket-sign" style="left: 600px; top: 500px;">
+                                    <div class="sign-label">Supermarket</div>
+                                </div>
+                            </div>
+                            <div class="position-indicator">Position: <span id="position-display-market">0, 0</span></div>
+                            <div class="mini-map">
+                                <div class="mini-map-player" id="mini-map-player-market"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="inventory">
+                    <h3>Inventory</h3>
+                    <div id="inventory-items"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="collection">
+            <h2>Your Collection</h2>
+            <div id="ball-collection" class="ball-grid">
+                <div class="ball-item owned">
+                    <div class="ball canada-ball">
+                        <div class="eyes"></div>
+                    </div>
+                    <div class="ball-name">Canada Ball</div>
+                </div>
+                <!-- More balls will be added here as they're adopted -->
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html> 

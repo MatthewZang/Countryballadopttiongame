@@ -1,0 +1,739 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #f0f0f0;
+    padding: 20px;
+    min-height: 100vh;
+    overflow-y: auto;
+}
+
+.game-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 50px;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+h2 {
+    color: #444;
+    margin-bottom: 15px;
+}
+
+.stats-panel {
+    display: flex;
+    justify-content: space-between;
+    background-color: #f8f8f8;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.main-area {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.current-ball, .adoption-center {
+    flex: 1;
+    background-color: #f8f8f8;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.ball {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.canada-ball {
+    background: linear-gradient(90deg, 
+        #d80621 0%, #d80621 33%, 
+        white 33%, white 67%, 
+        #d80621 67%, #d80621 100%);
+    position: relative;
+}
+
+.canada-ball::after {
+    content: '';
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path fill="%23d80621" d="M50,10 L53,30 L70,30 L56,42 L62,62 L50,50 L38,62 L44,42 L30,30 L47,30 Z M50,25 L48,35 L38,35 L46,43 L42,55 L50,47 L58,55 L54,43 L62,35 L52,35 Z"/></svg>');
+    background-size: contain;
+    background-repeat: no-repeat;
+    top: 40px;
+    left: 40px;
+}
+
+.eyes {
+    position: absolute;
+    width: 100%;
+    top: 40px;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+.eyes::before, .eyes::after {
+    content: '';
+    width: 20px;
+    height: 10px;
+    background-color: white;
+    border-radius: 50% 50% 0 0;
+    border: 2px solid black;
+    border-bottom: none;
+}
+
+.ball-name {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    margin: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.ball-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
+}
+
+.ball-item {
+    background-color: #f8f8f8;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.ball-item .ball {
+    width: 80px;
+    height: 80px;
+}
+
+.available-balls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.locked {
+    opacity: 0.5;
+}
+
+.locked::after {
+    content: '🔒';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+}
+
+/* World Section Styles */
+.world-section {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.special-btn {
+    background-color: #9c27b0;
+    font-size: 18px;
+    padding: 12px 24px;
+    margin: 20px auto;
+    display: block;
+    width: 200px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s;
+}
+
+.special-btn:hover {
+    background-color: #7b1fa2;
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+
+.hidden {
+    display: none;
+}
+
+#world-container {
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.world-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.world-area {
+    display: none;
+}
+
+.world-area.active {
+    display: block;
+}
+
+.scene {
+    width: 100%;
+    height: 400px;
+    background-color: #e0e0e0;
+    border-radius: 8px;
+    position: relative;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+/* Create a larger world area inside the scene */
+.world-area-container {
+    width: 2000px;
+    height: 2000px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: transform 0.3s ease-out;
+}
+
+/* Style the home scene */
+.home-scene .world-area-container {
+    background-color: #f5e9dc;
+    background-image: linear-gradient(#d9c7b3 1px, transparent 1px), 
+                      linear-gradient(90deg, #d9c7b3 1px, transparent 1px);
+    background-size: 50px 50px;
+}
+
+/* Style the park scene */
+.park-scene .world-area-container {
+    background-color: #c8e6c9;
+    background-image: linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px), 
+                      linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+}
+
+/* Style the market scene */
+.market-scene .world-area-container {
+    background-color: #bbdefb;
+    background-image: linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px), 
+                      linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+}
+
+/* Update player ball for the larger world */
+.player-ball {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    position: absolute;
+    z-index: 10;
+    cursor: move;
+    transition: left 0.3s ease-out, top 0.3s ease-out;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    animation: float 3s infinite ease-in-out;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+/* Position indicator */
+.position-indicator {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background-color: rgba(0,0,0,0.5);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    z-index: 100;
+}
+
+/* Remove first-person related styles */
+.first-person-view, .crosshair, .wall, .floor, .object-3d, .hud, #toggle-view-btn, 
+#toggle-view-btn-park, #toggle-view-btn-market, .first-person-mode {
+    display: none;
+}
+
+/* Add styles for world objects */
+.world-object {
+    position: absolute;
+}
+
+.tree {
+    width: 30px;
+    height: 120px;
+}
+
+.tree::before {
+    content: '';
+    position: absolute;
+    width: 30px;
+    height: 80px;
+    background-color: #795548;
+    bottom: 0;
+}
+
+.tree::after {
+    content: '';
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    background-color: #388e3c;
+    border-radius: 50%;
+    top: 0;
+    left: -25px;
+}
+
+.bed {
+    width: 100px;
+    height: 60px;
+    background-color: #6d4c41;
+    border-radius: 5px;
+}
+
+.bed::after {
+    content: '';
+    position: absolute;
+    width: 90px;
+    height: 30px;
+    background-color: #8d6e63;
+    border-radius: 5px;
+    top: -10px;
+    left: 5px;
+}
+
+.table {
+    width: 80px;
+    height: 40px;
+    background-color: #795548;
+    border-radius: 5px;
+}
+
+.table::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 50px;
+    background-color: #5d4037;
+    bottom: -50px;
+    left: 35px;
+}
+
+.building {
+    width: 100px;
+    height: 150px;
+    background-color: #90a4ae;
+}
+
+.shop {
+    width: 120px;
+    height: 100px;
+    background-color: #ffb74d;
+    border-radius: 5px;
+}
+
+.shop::after {
+    content: '';
+    position: absolute;
+    width: 140px;
+    height: 30px;
+    background-color: #ff9800;
+    top: -20px;
+    left: -10px;
+    border-radius: 5px 5px 0 0;
+}
+
+/* Mini-map */
+.mini-map {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 100px;
+    height: 100px;
+    background-color: rgba(0,0,0,0.2);
+    border: 2px solid rgba(0,0,0,0.3);
+    border-radius: 5px;
+    z-index: 100;
+    overflow: hidden;
+}
+
+.mini-map-player {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background-color: red;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Interactive buildings */
+.market-building {
+    background-color: #ef5350;
+    width: 120px;
+    height: 120px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.market-building::before {
+    content: '🛒';
+    position: absolute;
+    font-size: 40px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.park-building {
+    background-color: #66bb6a;
+    width: 120px;
+    height: 120px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.park-building::before {
+    content: '🌳';
+    position: absolute;
+    font-size: 40px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.market-building:hover, .park-building:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+/* Improved sign styles */
+.park-sign, .supermarket-sign {
+    width: 80px;
+    height: 120px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    position: relative;
+}
+
+.park-sign {
+    background-color: #66bb6a;
+    border: 5px solid #43a047;
+    border-radius: 8px;
+}
+
+.supermarket-sign {
+    background-color: #ef5350;
+    border: 5px solid #c62828;
+    border-radius: 8px;
+}
+
+.sign-label {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    padding: 5px;
+    font-size: 14px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.park-sign:hover, .supermarket-sign:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+/* Improved supermarket screen */
+.supermarket-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #f5f5f5;
+    background-image: linear-gradient(rgba(255,255,255,0.7) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,255,255,0.7) 1px, transparent 1px);
+    background-size: 20px 20px;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: 20px;
+    box-shadow: inset 0 0 50px rgba(0,0,0,0.1);
+    animation: fadeIn 0.3s ease-out;
+}
+
+.supermarket-screen.active {
+    display: flex;
+}
+
+.supermarket-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    max-width: 80%;
+}
+
+.back-to-world-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+}
+
+.back-to-world-btn:hover {
+    background-color: #d32f2f;
+    transform: scale(1.05);
+}
+
+/* Improved park screen */
+.park-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #e8f5e9;
+    background-image: 
+        radial-gradient(circle, rgba(255,255,255,0.7) 1px, transparent 1px),
+        radial-gradient(circle, rgba(255,255,255,0.7) 1px, transparent 1px);
+    background-size: 20px 20px;
+    background-position: 0 0, 10px 10px;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: 20px;
+    box-shadow: inset 0 0 50px rgba(0,0,0,0.1);
+    animation: fadeIn 0.3s ease-out;
+}
+
+.park-screen.active {
+    display: flex;
+}
+
+.park-activities {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    max-width: 80%;
+}
+
+.activity-item {
+    width: 130px;
+    height: 170px;
+    background-color: white;
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.activity-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.activity-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.activity-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.activity-description {
+    font-size: 12px;
+    color: #666;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Improved food items */
+.food-item {
+    width: 130px;
+    height: 150px;
+    background-color: white;
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.food-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.food-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+/* Enter effect animation */
+.enter-effect {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-color: transparent;
+    border-radius: 50%;
+    z-index: 150;
+    pointer-events: none;
+    animation: enterEffect 1s ease-out forwards;
+}
+
+@keyframes enterEffect {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+    }
+    100% {
+        transform: scale(20);
+        box-shadow: 0 0 0 50px rgba(255, 255, 255, 0);
+        opacity: 0;
+    }
+}
+
+/* Exit door styles */
+.exit-door {
+    position: absolute;
+    width: 60px;
+    height: 100px;
+    background-color: #795548;
+    border: 4px solid #5d4037;
+    border-radius: 5px 5px 0 0;
+    bottom: 20px;
+    left: 20px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    z-index: 210;
+}
+
+.exit-door::before {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: #ffd700;
+    border-radius: 50%;
+    top: 45px;
+    right: 10px;
+}
+
+.exit-door::after {
+    content: 'EXIT';
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.exit-door:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.exit-sign {
+    position: absolute;
+    width: 50px;
+    height: 30px;
+    background-color: #4caf50;
+    color: white;
+    text-align: center;
+    line-height: 30px;
+    font-weight: bold;
+    border-radius: 5px;
+    top: -15px;
+    left: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.exit-sign::after {
+    content: '↓';
+    position: absolute;
+    bottom: -15px;
+    left: 20px;
+    font-size: 16px;
+    color: #4caf50;
+} 
